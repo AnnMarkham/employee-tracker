@@ -4,8 +4,8 @@ const inquirer = require("inquirer");
 //require('./server')
 
 //prompt for choices at start  -- write prompts and add/update functions as async await functions?
-const startPrompt = () => {
-  return inquirer.prompt([
+const startPrompt = async () => {
+  await inquirer.prompt([
     {
       type: "list",
       name: "choice",

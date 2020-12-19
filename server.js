@@ -15,11 +15,10 @@ const connect = async () => {
   return connection;
 };
 
-// rewrite as async await functions later?
-
+//This function meets requirement -- just need to get it to work only when view all depts is selected from startPrompt in index.js
 const allDepartments = async (connection) => {
   const [departmentRows] = await connection.query(`SELECT * FROM department`);
-  console.log("DepartmentRows:", departmentRows);
+  console.table("All Departments:", departmentRows);
 };
 const runDepartments = async () => {
   const connection = await connect();
@@ -32,7 +31,7 @@ runDepartments(); //export this and call on select of all departments in index.j
 
 const allRoles = async (connection) => {
   const [roleRows] = await connection.query(`SELECT * FROM roles`);
-  console.log("RoleRows:", roleRows);
+  console.table("All Rows:", roleRows);
 };
 const runRoles = async () => {
   const connection = await connect();
@@ -45,7 +44,7 @@ runRoles(); //export this and call on select of all departments in index.js
 
 const allEmployees = async (connection) => {
   const [employeeRows] = await connection.query(`SELECT * FROM employee`);
-  console.log("EmployeeRows:", employeeRows);
+  console.table("All Employees:", employeeRows);
   connection.end();
 };
 const runEmployees = async () => {
@@ -56,19 +55,12 @@ const runEmployees = async () => {
 
 runEmployees(); //export this and call on select of all departments in index.js
 
-// const allRoles = () => {
-//   "SELECT * FROM roles";
-// };
-// allRoles();
-
-// const allEmployees = () => {
-//   "SELECT * FROM employee";
-// };
-// allEmployees();
-
-// // module.exports = connection;
-// module.exports = {
-//   allDepartments,
-//   allRoles,
-//   allEmployees,
-// };
+// module.exports = connection;
+module.exports = {
+  allDepartments,
+  allRoles,
+  allEmployees,
+  runDepartments,
+  runRoles,
+  runEmployees,
+};
