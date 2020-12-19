@@ -1,0 +1,31 @@
+{
+  "name": "employee-tracker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "migrate": "mysql2 db/employeeTracker.db < db/schema.sql",
+    "seed": "mysql2 db/employeeTracker.db < db/seeds/sql",
+    "db": "mysql2 db/employeeTracker.db",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AnnMarkham/employee-tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AnnMarkham/employee-tracker/issues"
+  },
+  "homepage": "https://github.com/AnnMarkham/employee-tracker#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "express": "^4.17.1",
+    "inquirer": "^7.3.3",
+    "mysql2": "^2.2.5",
+    "nodemon": "^2.0.6"
+  }
+}
