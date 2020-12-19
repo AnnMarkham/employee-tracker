@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "migrate": "mysql2 db/employeeTracker.db < db/schema.sql",
-    "seed": "mysql2 db/employeeTracker.db < db/seeds/sql",
+    "migrate": "mysql2 db/employeetracker.db < db/schema.sql",
+    "seed": "mysql2 db/employeetracker.db < db/seeds/sql",
     "db": "mysql2 db/employeeTracker.db",
     "start": "nodemon server.js"
   },
