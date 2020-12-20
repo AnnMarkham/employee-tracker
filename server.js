@@ -15,17 +15,20 @@ const connect = async () => {
   return connection;
 };
 
+//=================================
+//      VIEW FUNCTIONS
+//================================
 //This function meets requirement -- just need to get it to work only when view all depts is selected from startPrompt in index.js
 const allDepartments = async (connection) => {
   const [departmentRows] = await connection.query(`SELECT * FROM department`);
   console.table("All Departments:", departmentRows);
 };
-const runDepartments = async () => {
-  const connection = await connect();
-  await allDepartments(connection);
-  console.log(allDepartments);
-  connection.end();
-};
+// const runDepartments = async () => {
+//   const connection = await connect();
+//   await allDepartments(connection);
+//   console.log(allDepartments);
+//   connection.end();
+// };
 
 runDepartments(); //export this and call on select of all departments in index.js
 
@@ -42,18 +45,8 @@ const runRoles = async () => {
 
 runRoles(); //export this and call on select of all departments in index.js
 
-const allEmployees = async (connection) => {
-  const [employeeRows] = await connection.query(`SELECT * FROM employee`);
-  console.table("All Employees:", employeeRows);
-  connection.end();
-};
-const runEmployees = async () => {
-  const connection = await connect();
-  await allEmployees(connection);
-  console.log(allEmployees);
-};
-
-runEmployees(); //export this and call on select of all departments in index.js
+//
+//export this and call on select of all departments in index.js
 
 // module.exports = connection;
 module.exports = {

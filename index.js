@@ -1,42 +1,92 @@
 "use strict";
+const mysql = require("mysql2/promise");
 const inquirer = require("inquirer");
-// const cTable = require('console.table');
-//require('./server')
+const cTable = require("console.table");
+// connect
 
-//prompt for choices at start  -- write prompts and add/update functions as async await functions?
-const startPrompt = async () => {
-  await inquirer.prompt([
-    {
-      type: "list",
-      name: "choice",
-      message: "What do would you like to do",
-      choices: [
-        "view all departments",
-        "view all roles",
-        "view all employees",
-        "add a department",
-        "add a role",
-        "add an employee",
-        "update an employee role",
-      ],
-    },
-  ]);
+const connect = async () => {
+  const connection = await mysql.createConnection({
+    host: "localhost",
+    port: 3306,
+    // Your MySQL username
+    user: "root",
+    // Your MySQL password
+    password: "Iforgot1!",
+    database: "employeetracker_db",
+  });
+  console.log("connected as id " + connection.threadId + "\n");
+  return connection;
 };
 
+//prompt for choices at start  -- write prompts and add/update functions as async await functions?
+
+const startPrompt = () => {
+  return inquirer.prompt({
+    type: "list",
+    name: "choice",
+    message: "What do would you like to do",
+    choices: [
+      "view all departments",
+      "view all roles",
+      "view all employees",
+      "add a department",
+      "add a role",
+      "add an employee",
+      "update an employee role",
+    ],
+  });
+};
 //view all depts    -- get code in departmentRoutes -- Display as formatted table
+const allDepartments = async (connection) => {
+  const [departmentRows] = await connection.query(`SELECT * FROM department`);
+  console.table("All Departments:", departmentRows);
+};
+const runDepartments = async () => {
+  const connection = await connect();
+  await allDepartments(connection);
+  console.log(allDepartments);
+  connection.end();
+};
+
 //view all roles
+
+const allRoles = async (connection) => {
+  const [roleRows] = await connection.query(`SELECT * FROM roles`);
+  console.table("All Rows:", roleRows);
+};
+const runRoles = async () => {
+  const connection = await connect();
+  await allRoles(connection);
+  console.log(allRoles);
+  connection.end();
+};
+
 //view all employees   -- get code in employeeRoutes -- Display as formatted table
+const allEmployees = async (connection) => {
+  const [employeeRows] = await connection.query(
+    `SELECT * FROM employee JOIN roles ON employee.role_id`
+  );
+  console.table("All Employees:", employeeRows);
+  connection.end();
+};
+const runEmployees = async () => {
+  const connection = await connect();
+  await allEmployees(connection);
+  console.log(allEmployees);
+};
 
 //add a dept
 //second prompt -- what is name of the new dept? .then addDepartment()
-const addDeptPrompt = () => {
-  return inquirer.prompt([
-    {
-      type: "input",
-      name: "newDepartment",
-      message: "What is the name of the new department?",
-    },
-  ]);
+const addDeptPrompt = async () => {
+  departmentName = await inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "newDepartment",
+        message: "What is the name of the new department?",
+      },
+    ])
+    .then(`INSERT VALUE INTO department(name) VALUE (?)`, [departmentName]);
 };
 
 //add a role
@@ -103,8 +153,62 @@ const updateEmplRolePrompt = () => {
 //write functions for addDepartment, addRoles, addEamploye, and updateEmployee that are called above
 
 //this needs to be updated -- if choose add role, it runs addDeptPrompt first.
-startPrompt()
-  .then(addDeptPrompt)
-  .then(addRolePrompt)
-  .then(addEmployeePrompt)
-  .then(updateEmplRolePrompt);
+function controlPrompts() {
+  startPrompt().then((res) => {
+    switch (res.choice) {
+      case "view all departments":
+        runDepartments()
+          .then((res) => {
+            console.table(cTable.getTable(res));
+          })
+          .then((res) => {
+            controlPrompts();
+          });
+        break;
+      case "view all roles":
+        runRoles()
+          .then((res) => {
+            console.table(cTable.getTable(res));
+          })
+          .then((res) => {
+            controlPrompts();
+          });
+        break;
+
+      case "view all employees":
+        runEmployees()
+          .then((res) => {
+            console.table(cTable.getTable(res));
+          })
+          .then((res) => {
+            controlPrompts();
+          });
+        break;
+
+      case "add a department":
+        addDeptPrompt().then((res) => {
+          controlPrompts();
+        });
+
+        break;
+      case "add a role":
+        addRolePrompt().then((res) => {
+          controlPrompts();
+        });
+
+        break;
+      case "add an employee":
+        addEmployeePrompt().then((res) => {
+          controlPrompts();
+        });
+        break;
+      case "update an employee":
+        updateEmplRolePrompt().then((res) => {
+          controlPrompts();
+        });
+        break;
+    }
+  });
+}
+
+controlPrompts();
