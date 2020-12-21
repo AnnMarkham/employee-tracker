@@ -36,6 +36,7 @@ const startPrompt = () => {
     ],
   });
 };
+//=======VIEW DEPARTMENTS===========
 //view all depts    -- get code in departmentRoutes -- Display as formatted table
 const allDepartments = async (connection) => {
   const [departmentRows] = await connection.query(`SELECT * FROM department`);
@@ -44,10 +45,11 @@ const allDepartments = async (connection) => {
 const runDepartments = async () => {
   const connection = await connect();
   await allDepartments(connection);
-  console.log(allDepartments);
+  // console.log(allDepartments);
   connection.end();
 };
 
+//========VIEW ROLES ============
 //view all roles
 
 const allRoles = async (connection) => {
@@ -61,6 +63,7 @@ const runRoles = async () => {
   connection.end();
 };
 
+//=========VIEW EMPLOYEES===============
 //view all employees   -- get code in employeeRoutes -- Display as formatted table
 const allEmployees = async (connection) => {
   const [employeeRows] = await connection.query(
@@ -75,18 +78,20 @@ const runEmployees = async () => {
   console.log(allEmployees);
 };
 
+//////////////////////////////////////CODE THAT REQUIRES A SECOND PROMPT
+//////////////////Second question is asked but doesn’t wait for second answer…
+/////////////////////////GRR
+
 //add a dept
 //second prompt -- what is name of the new dept? .then addDepartment()
-const addDeptPrompt = async () => {
-  departmentName = await inquirer
-    .prompt([
-      {
-        type: "input",
-        name: "newDepartment",
-        message: "What is the name of the new department?",
-      },
-    ])
-    .then(`INSERT VALUE INTO department(name) VALUE (?)`, [departmentName]);
+const addDeptPrompt = () => {
+  return inquirer.prompt([
+    {
+      type: "input",
+      name: "newDepartment",
+      message: "What is the name of the new?",
+    },
+  ]);
 };
 
 //add a role
@@ -139,13 +144,13 @@ const updateEmplRolePrompt = () => {
   return inquirer.prompt([
     {
       type: "input",
-      name: "updatedEmplName",
-      message: "What is the Id of the employee you would like to update?",
+      name: "updatedEmplId",
+      message: "What is ID of the employee to be updated?",
     },
     {
       type: "input",
-      name: "updatedEmplRole",
-      message: "What is the Role Id of the employee you would like to update?",
+      name: "updatedEmplRoleId",
+      message: "What is the role ID you would like to update?",
     },
   ]);
 };
@@ -157,40 +162,28 @@ function controlPrompts() {
   startPrompt().then((res) => {
     switch (res.choice) {
       case "view all departments":
-        runDepartments()
-          .then((res) => {
-            console.table(cTable.getTable(res));
-          })
-          .then((res) => {
-            controlPrompts();
-          });
+        runDepartments().then((res) => {
+          controlPrompts();
+        });
         break;
       case "view all roles":
-        runRoles()
-          .then((res) => {
-            console.table(cTable.getTable(res));
-          })
-          .then((res) => {
-            controlPrompts();
-          });
+        runRoles().then((res) => {
+          controlPrompts();
+        });
         break;
 
       case "view all employees":
-        runEmployees()
-          .then((res) => {
-            console.table(cTable.getTable(res));
-          })
-          .then((res) => {
-            controlPrompts();
-          });
+        runEmployees().then((res) => {
+          controlPrompts();
+        });
         break;
 
       case "add a department":
         addDeptPrompt().then((res) => {
           controlPrompts();
         });
-
         break;
+
       case "add a role":
         addRolePrompt().then((res) => {
           controlPrompts();
@@ -202,7 +195,14 @@ function controlPrompts() {
           controlPrompts();
         });
         break;
-      case "update an employee":
+
+      case "add an employee":
+        addEmployeePrompt().then((res) => {
+          controlPrompts();
+        });
+        break;
+
+      case "update an employee role":
         updateEmplRolePrompt().then((res) => {
           controlPrompts();
         });
