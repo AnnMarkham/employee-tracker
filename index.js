@@ -2,8 +2,8 @@
 const mysql = require("mysql2");
 const inquirer = require("inquirer");
 const cTable = require("console.table");
-// connect
 
+// connect
 const connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
@@ -19,8 +19,7 @@ connection.connect((err) => {
   controlPrompts();
 });
 
-//prompt for choices at start  -- write prompts and add/update functions as async await functions?
-
+//prompt for main menu
 const startPrompt = () => {
   return inquirer.prompt({
     type: "list",
@@ -37,42 +36,35 @@ const startPrompt = () => {
     ],
   });
 };
-//=======VIEW DEPARTMENTS===========
-//view all depts    -- get code in departmentRoutes -- Display as formatted table
-// get deps
+
+//view all depts
 const allDepartments = async () => {
   connection.query("SELECT * FROM department", function (err, res) {
     if (err) throw err;
-    console.table(res);
+    console.table("\n" + "All Departments: ", res);
     controlPrompts();
   });
 };
-//========VIEW ROLES ============
+
 //view all roles
 const allRoles = async () => {
   connection.query("SELECT * FROM roles", function (err, res) {
     if (err) throw err;
-    console.table(res);
+    console.table("\n" + "All Roles: ", res);
     controlPrompts();
   });
 };
 
-//=========VIEW EMPLOYEES===============
-//view all employees   -- get code in employeeRoutes -- Display as formatted table
+//view all employees
 const allEmployees = async () => {
-  connection.query("SELECT * FROM department", function (err, res) {
+  connection.query("SELECT * FROM employee", function (err, res) {
     if (err) throw err;
-    console.table(res);
+    console.table("\n" + "All Employees: ", res);
     controlPrompts();
   });
 };
-
-//////////////////////////////////////CODE THAT REQUIRES A SECOND PROMPT
-//////////////////Second question is asked but doesn’t wait for second answer…
-/////////////////////////GRR
 
 //add a dept
-//second prompt -- what is name of the new dept? .then addDepartment()
 const addDepartment = async () => {
   const res = await inquirer.prompt({
     name: "department",
@@ -84,23 +76,18 @@ const addDepartment = async () => {
     { name: res.department },
     function (err, res) {
       if (err) throw err;
-      console.log("Department Added!");
-      controlPrompts();
+      console.log("\n" + "Department Added!");
     }
   );
 };
 
-//////ADD FREAKING DEPARTMENT HERE!!!!!!!!!!!!!
-
 //add a role
-//second prompt --what is title for new role? what is salary for new role? .then addRoles()
-
 const addRole = async () => {
   const res = await inquirer.prompt([
     {
       name: "title",
       type: "input",
-      message: " What is the name of the new employee title?",
+      message: " What the title for the new role?",
     },
     {
       name: "salary",
@@ -124,13 +111,12 @@ const addRole = async () => {
     },
     function (err, res) {
       if (err) throw err;
+      console.log("\n" + "Role Added!");
     }
   );
-  controlPrompts();
 };
 
-//add an employee  -- later may link to tables so can choose role Id by Title, or Manager Id by something??
-//second prompt -- employee first name? last name? role? manager? .then addEmployee()
+//add an employee
 const addEmployee = async () => {
   const res = await inquirer.prompt([
     {
@@ -166,13 +152,12 @@ const addEmployee = async () => {
     },
     function (err, res) {
       if (err) throw err;
+      console.log("\n" + "Employee Added!");
     }
   );
-  controlPrompts();
 };
 
-//update an employee role  --- later add link to choose employee id by name ? & role id to title?
-//second prompt -- select an employee name/id? select a role?  .then updateEmployee()
+//update an employee role
 const updateEmplRole = async () => {
   const res = await inquirer.prompt([
     {
@@ -191,7 +176,7 @@ const updateEmplRole = async () => {
     "UPDATE employee SET? WHERE ?",
     [
       {
-        role_id: res.id,
+        role_id: res.role_id,
       },
       {
         id: res.id,
@@ -199,14 +184,12 @@ const updateEmplRole = async () => {
     ],
     function (err, res) {
       if (err) throw err;
+      console.log("\n" + "Role Updated!");
     }
   );
-  controlPrompts();
 };
 
-//write functions for addDepartment, addRoles, addEamploye, and updateEmployee that are called above
-
-//this needs to be updated -- if choose add role, it runs addDeptPrompt first.
+//controls flow of functions
 const controlPrompts = () => {
   startPrompt().then((res) => {
     switch (res.choice) {
@@ -215,6 +198,7 @@ const controlPrompts = () => {
           controlPrompts();
         });
         break;
+
       case "view all roles":
         allRoles().then((res) => {
           controlPrompts();
