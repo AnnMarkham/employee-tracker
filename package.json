@@ -24,6 +24,7 @@
     "inquirer": "^7.3.3",
     "inquirer-promise": "^1.0.0",
     "mysql2": "^2.2.5",
+    "mysql2-promise": "^0.1.4",
     "nodemon": "^2.0.6"
   }
 }

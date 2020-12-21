@@ -94,24 +94,44 @@ const addDepartment = async () => {
 
 //add a role
 //second prompt --what is title for new role? what is salary for new role? .then addRoles()
-const addRolePrompt = () => {
-  return inquirer.prompt([
+
+const addRole = async () => {
+  const res = await inquirer.prompt([
     {
+      name: "title",
       type: "input",
-      name: "newRole",
-      message: "What is title for the new role?",
+      message: " What is the name of the new employee title?",
     },
     {
+      name: "salary",
       type: "input",
-      name: "newRoleSalary",
-      message: "What is the salary for the new role?",
+      message: "What is the salary of this title?",
+    },
+    {
+      name: "id",
+      type: "list",
+      message: "Which Department does this title work in?",
+      choices: [100, 101, 110, 111, 1],
     },
   ]);
+  console.log(res.title, res.salary, res.id);
+  connection.query(
+    "INSERT INTO roles SET ?",
+    {
+      title: res.title,
+      salary: res.salary,
+      department_id: res.id,
+    },
+    function (err, res) {
+      if (err) throw err;
+    }
+  );
+  controlPrompts();
 };
 
 //add an employee  -- later may link to tables so can choose role Id by Title, or Manager Id by something??
 //second prompt -- employee first name? last name? role? manager? .then addEmployee()
-const addEmployeePrompt = () => {
+const addEmployee = () => {
   return inquirer.prompt([
     {
       type: "input",
@@ -138,7 +158,7 @@ const addEmployeePrompt = () => {
 
 //update an employee role  --- later add link to choose employee id by name ? & role id to title?
 //second prompt -- select an employee name/id? select a role?  .then updateEmployee()
-const updateEmplRolePrompt = () => {
+const updateEmplRole = () => {
   return inquirer.prompt([
     {
       type: "input",
@@ -183,25 +203,19 @@ const controlPrompts = () => {
         break;
 
       case "add a role":
-        addRolePrompt().then((res) => {
+        addRole().then((res) => {
           controlPrompts();
         });
 
         break;
       case "add an employee":
-        addEmployeePrompt().then((res) => {
-          controlPrompts();
-        });
-        break;
-
-      case "add an employee":
-        addEmployeePrompt().then((res) => {
+        addEmployee().then((res) => {
           controlPrompts();
         });
         break;
 
       case "update an employee role":
-        updateEmplRolePrompt().then((res) => {
+        updateEmplRole().then((res) => {
           controlPrompts();
         });
         break;
