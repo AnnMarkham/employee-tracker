@@ -131,29 +131,44 @@ const addRole = async () => {
 
 //add an employee  -- later may link to tables so can choose role Id by Title, or Manager Id by something??
 //second prompt -- employee first name? last name? role? manager? .then addEmployee()
-const addEmployee = () => {
-  return inquirer.prompt([
+const addEmployee = async () => {
+  const res = await inquirer.prompt([
     {
       type: "input",
-      name: "newFirstName",
+      name: "first_name",
       message: "What is the new employee's first name?",
     },
     {
       type: "input",
-      name: "newLastName",
+      name: "last_name",
       message: "What is the new employee's last name?",
     },
     {
-      type: "input",
-      name: "newEmployeeRole",
+      type: "list",
+      name: "role_id",
       message: "What is the new employee's role Id?",
+      choices: [142, 101, 100, 111, 1, 1],
     },
     {
-      type: "input",
-      name: "newEmployeeManager",
+      type: "list",
+      name: "nmanager_id",
       message: "What is the new employee's manager's id number?",
+      choices: [1042, 2, 3, 4],
     },
   ]);
+  connection.query(
+    "INSERT INTO employee SET ?",
+    {
+      first_name: res.first_name,
+      last_name: res.last_name,
+      role_id: res.role_id,
+      manager_id: res.manager_id,
+    },
+    function (err, res) {
+      if (err) throw err;
+    }
+  );
+  controlPrompts();
 };
 
 //update an employee role  --- later add link to choose employee id by name ? & role id to title?
