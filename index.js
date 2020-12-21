@@ -1,22 +1,23 @@
 "use strict";
-const mysql = require("mysql2/promise");
+const mysql = require("mysql2");
 const inquirer = require("inquirer");
 const cTable = require("console.table");
 // connect
 
-const connect = async () => {
-  const connection = await mysql.createConnection({
-    host: "localhost",
-    port: 3306,
-    // Your MySQL username
-    user: "root",
-    // Your MySQL password
-    password: "Iforgot1!",
-    database: "employeetracker_db",
-  });
-  console.log("connected as id " + connection.threadId + "\n");
-  return connection;
-};
+const connection = mysql.createConnection({
+  host: "localhost",
+  port: 3306,
+  user: "root",
+  password: "Iforgot1!",
+  database: "employeetracker_db",
+});
+
+// connect and log
+connection.connect((err) => {
+  if (err) throw err;
+  console.log("connected as id " + connection.threadId);
+  controlPrompts();
+});
 
 //prompt for choices at start  -- write prompts and add/update functions as async await functions?
 
@@ -38,44 +39,32 @@ const startPrompt = () => {
 };
 //=======VIEW DEPARTMENTS===========
 //view all depts    -- get code in departmentRoutes -- Display as formatted table
-const allDepartments = async (connection) => {
-  const [departmentRows] = await connection.query(`SELECT * FROM department`);
-  console.table("All Departments:", departmentRows);
+// get deps
+const allDepartments = async () => {
+  connection.query("SELECT * FROM department", function (err, res) {
+    if (err) throw err;
+    console.table(res);
+    controlPrompts();
+  });
 };
-const runDepartments = async () => {
-  const connection = await connect();
-  await allDepartments(connection);
-  // console.log(allDepartments);
-  connection.end();
-};
-
 //========VIEW ROLES ============
 //view all roles
-
-const allRoles = async (connection) => {
-  const [roleRows] = await connection.query(`SELECT * FROM roles`);
-  console.table("All Rows:", roleRows);
-};
-const runRoles = async () => {
-  const connection = await connect();
-  await allRoles(connection);
-  console.log(allRoles);
-  connection.end();
+const allRoles = async () => {
+  connection.query("SELECT * FROM roles", function (err, res) {
+    if (err) throw err;
+    console.table(res);
+    controlPrompts();
+  });
 };
 
 //=========VIEW EMPLOYEES===============
 //view all employees   -- get code in employeeRoutes -- Display as formatted table
-const allEmployees = async (connection) => {
-  const [employeeRows] = await connection.query(
-    `SELECT * FROM employee JOIN roles ON employee.role_id`
-  );
-  console.table("All Employees:", employeeRows);
-  connection.end();
-};
-const runEmployees = async () => {
-  const connection = await connect();
-  await allEmployees(connection);
-  console.log(allEmployees);
+const allEmployees = async () => {
+  connection.query("SELECT * FROM department", function (err, res) {
+    if (err) throw err;
+    console.table(res);
+    controlPrompts();
+  });
 };
 
 //////////////////////////////////////CODE THAT REQUIRES A SECOND PROMPT
@@ -84,15 +73,8 @@ const runEmployees = async () => {
 
 //add a dept
 //second prompt -- what is name of the new dept? .then addDepartment()
-const addDeptPrompt = () => {
-  return inquirer.prompt([
-    {
-      type: "input",
-      name: "newDepartment",
-      message: "What is the name of the new?",
-    },
-  ]);
-};
+
+//////ADD FREAKING DEPARTMENT HERE!!!!!!!!!!!!!
 
 //add a role
 //second prompt --what is title for new role? what is salary for new role? .then addRoles()
@@ -158,28 +140,28 @@ const updateEmplRolePrompt = () => {
 //write functions for addDepartment, addRoles, addEamploye, and updateEmployee that are called above
 
 //this needs to be updated -- if choose add role, it runs addDeptPrompt first.
-function controlPrompts() {
+const controlPrompts = () => {
   startPrompt().then((res) => {
     switch (res.choice) {
       case "view all departments":
-        runDepartments().then((res) => {
+        allDepartments().then((res) => {
           controlPrompts();
         });
         break;
       case "view all roles":
-        runRoles().then((res) => {
+        allRoles().then((res) => {
           controlPrompts();
         });
         break;
 
       case "view all employees":
-        runEmployees().then((res) => {
+        allEmployees().then((res) => {
           controlPrompts();
         });
         break;
 
       case "add a department":
-        addDeptPrompt().then((res) => {
+        addDepartment().then((res) => {
           controlPrompts();
         });
         break;
@@ -209,6 +191,4 @@ function controlPrompts() {
         break;
     }
   });
-}
-
-controlPrompts();
+};
