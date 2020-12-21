@@ -27,9 +27,9 @@ Database app to keep track of employees.
 
 ### See video of application in use:
 
- <iframe src="https://drive.google.com/file/d/1LSVxiWZUPADfJvqhTLm1Yym5ydX7yXie/preview" width="640" height="480"></iframe>
+"https://drive.google.com/file/d/1LSVxiWZUPADfJvqhTLm1Yym5ydX7yXie/preview" width="640" height="480"
 
-Here is a screenshot of sql schema: ![](sqlSchema.png)
+Screenshot of sql schema in this repo: sqlSchema.png
 
 ## Questions
 
