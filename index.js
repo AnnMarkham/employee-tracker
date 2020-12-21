@@ -12,29 +12,53 @@ const connection = mysql.createConnection({
   database: "employeetracker_db",
 });
 
-// connect and log
 connection.connect((err) => {
   if (err) throw err;
-  console.log("connected as id " + connection.threadId);
-  controlPrompts();
+  console.log(`Connected at ${connection.threadId}`);
+  startPrompt();
 });
 
 //prompt for main menu
 const startPrompt = () => {
-  return inquirer.prompt({
-    type: "list",
-    name: "choice",
-    message: "What do would you like to do",
-    choices: [
-      "view all departments",
-      "view all roles",
-      "view all employees",
-      "add a department",
-      "add a role",
-      "add an employee",
-      "update an employee role",
-    ],
-  });
+  inquirer
+    .prompt({
+      type: "list",
+      name: "choice",
+      message: "What do would you like to do",
+      choices: [
+        "view all departments",
+        "view all roles",
+        "view all employees",
+        "add a department",
+        "add a role",
+        "add an employee",
+        "update an employee role",
+      ],
+    })
+    .then(({ choice }) => {
+      switch (choice) {
+        case "view all departments":
+          return allDepartments();
+
+        case "view all roles":
+          return allRoles();
+
+        case "view all employees":
+          return allEmployees();
+
+        case "add a department":
+          return addDepartment();
+
+        case "add a role":
+          return addRole();
+
+        case "add an employee":
+          return addEmployee();
+
+        case "update an employee role":
+          return updateEmplRole();
+      }
+    });
 };
 
 //view all depts
@@ -42,7 +66,7 @@ const allDepartments = async () => {
   connection.query("SELECT * FROM department", function (err, res) {
     if (err) throw err;
     console.table("\n" + "All Departments: ", res);
-    controlPrompts();
+    startPrompt();
   });
 };
 
@@ -51,7 +75,7 @@ const allRoles = async () => {
   connection.query("SELECT * FROM roles", function (err, res) {
     if (err) throw err;
     console.table("\n" + "All Roles: ", res);
-    controlPrompts();
+    startPrompt();
   });
 };
 
@@ -60,7 +84,7 @@ const allEmployees = async () => {
   connection.query("SELECT * FROM employee", function (err, res) {
     if (err) throw err;
     console.table("\n" + "All Employees: ", res);
-    controlPrompts();
+    startPrompt();
   });
 };
 
@@ -76,7 +100,8 @@ const addDepartment = async () => {
     { name: res.department },
     function (err, res) {
       if (err) throw err;
-      console.log("\n" + "Department Added!");
+      console.log("\n" + "Department Added!" + "\n");
+      startPrompt();
     }
   );
 };
@@ -111,7 +136,8 @@ const addRole = async () => {
     },
     function (err, res) {
       if (err) throw err;
-      console.log("\n" + "Role Added!");
+      console.log("\n" + "Role Added!" + "\n");
+      startPrompt();
     }
   );
 };
@@ -152,7 +178,8 @@ const addEmployee = async () => {
     },
     function (err, res) {
       if (err) throw err;
-      console.log("\n" + "Employee Added!");
+      console.log("\n" + "Employee Added!" + "\n");
+      startPrompt();
     }
   );
 };
@@ -184,56 +211,8 @@ const updateEmplRole = async () => {
     ],
     function (err, res) {
       if (err) throw err;
-      console.log("\n" + "Role Updated!");
+      console.log("\n" + "Role Updated!" + "\n");
+      startPrompt();
     }
   );
-};
-
-//controls flow of functions
-const controlPrompts = () => {
-  startPrompt().then((res) => {
-    switch (res.choice) {
-      case "view all departments":
-        allDepartments().then((res) => {
-          controlPrompts();
-        });
-        break;
-
-      case "view all roles":
-        allRoles().then((res) => {
-          controlPrompts();
-        });
-        break;
-
-      case "view all employees":
-        allEmployees().then((res) => {
-          controlPrompts();
-        });
-        break;
-
-      case "add a department":
-        addDepartment().then((res) => {
-          controlPrompts();
-        });
-        break;
-
-      case "add a role":
-        addRole().then((res) => {
-          controlPrompts();
-        });
-
-        break;
-      case "add an employee":
-        addEmployee().then((res) => {
-          controlPrompts();
-        });
-        break;
-
-      case "update an employee role":
-        updateEmplRole().then((res) => {
-          controlPrompts();
-        });
-        break;
-    }
-  });
 };
