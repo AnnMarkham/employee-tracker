@@ -173,19 +173,35 @@ const addEmployee = async () => {
 
 //update an employee role  --- later add link to choose employee id by name ? & role id to title?
 //second prompt -- select an employee name/id? select a role?  .then updateEmployee()
-const updateEmplRole = () => {
-  return inquirer.prompt([
+const updateEmplRole = async () => {
+  const res = await inquirer.prompt([
     {
       type: "input",
-      name: "updatedEmplId",
+      name: "id",
       message: "What is ID of the employee to be updated?",
     },
     {
-      type: "input",
-      name: "updatedEmplRoleId",
-      message: "What is the role ID you would like to update?",
+      type: "list",
+      name: "role_id",
+      message: "What is the new role id?",
+      choices: [1042, 2, 3, 4],
     },
   ]);
+  connection.query(
+    "UPDATE employee SET? WHERE ?",
+    [
+      {
+        role_id: res.id,
+      },
+      {
+        id: res.id,
+      },
+    ],
+    function (err, res) {
+      if (err) throw err;
+    }
+  );
+  controlPrompts();
 };
 
 //write functions for addDepartment, addRoles, addEamploye, and updateEmployee that are called above
