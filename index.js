@@ -73,6 +73,22 @@ const allEmployees = async () => {
 
 //add a dept
 //second prompt -- what is name of the new dept? .then addDepartment()
+const addDepartment = async () => {
+  const res = await inquirer.prompt({
+    name: "department",
+    type: "input",
+    message: "Please enter a new department name",
+  });
+  connection.query(
+    "INSERT INTO department SET ?",
+    { name: res.department },
+    function (err, res) {
+      if (err) throw err;
+      console.log("Department Added!");
+      controlPrompts();
+    }
+  );
+};
 
 //////ADD FREAKING DEPARTMENT HERE!!!!!!!!!!!!!
 
